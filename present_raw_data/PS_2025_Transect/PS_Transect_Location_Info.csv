@@ -1,0 +1,41 @@
+month,day,year,dive_id,location,diver_1,diver_2,transect,visibility,average_depth,substrate,substrate_level,start_time,end_time,notes
+Jan,6,2025,BI_J6_T1_BD,Boulder Island,Nicole,Claire,T1_Blk_D,2.5,7.5,sand/rock/boulder,mix,11:00,11:20,there was a seal swimming around
+Jan,6,2025,BI_J6_T2_BD,Boulder Island,Nicole,Claire ,T2_Blk_D,2.5,8,sand ,soft,11:22,11:35,"there was a noticeable pick up in current, and I saw a big nudibranch "
+Jan,6,2025,BI_J6_T1_BU,Boulder Island,Claire,Nicole,T1_Blk_U,2.5,7,sand/boulder,mix,11:56,12:17,
+Jan,6,2025,BI_J6_T2_BU,Boulder Island,Claire,Nicole,T2_Blk_U,2.5,7,sand,soft,12:18,12:33,
+Jan,20,2025,TI_J20_T1_BD,Twin Island,Em,Nicole,T1_Blk_D,4.5,9,bedrock,hard,N/A,N/A,"cliff, drop off,  no time because low air"
+Jan,20,2025,TI_J20_T2_BD,Twin Island,Em,Nicole,T2_Blk_D,4.5,7.5,silt/sand/bedrock,mix,N/A,N/A,"silt, sand, mixed "
+Jan,20,2025,TI_J20_T1_BU,Twin Island,Nicole,Em,T1_Blk_U,4.5,9,bedrock,hard,12:40,12:54,"cliff, drop off,"
+Jan,20,2025,TI_J20_T2_BU,Twin Island,Nicole,Em,T2_Blk_U,4.5,7.2,silt/sand/bedrock,mix,12:55,13:05,"silt, sand, mixed "
+Jan,27,2025,BB_J27_T1_BU,Bedwell Bay,Nicole,Claire,T1_Blk_U,3,8,wall/boulder,hard,13:28,13:40,wall and boulders 
+Jan,27,2025,BB_J27_T2_BU,Bedwell Bay,Nicole,Claire,T2_Blk_U,3,8,boulders/sand/wall,hard,13:41,13:51,
+Jan,27,2025,BB_J27_T1_BD,Bedwell Bay,Claire,Nicole,T1_Blk_D,3,8,sand w/ boulders,mix,13:24,13:34,
+Jan,27,2025,BB_J27_T2_BD,Bedwell Bay,Claire,Nicole,T2_Blk_D,3,8.3,sandy few boulders,soft,13:38,13:48,
+Feb,5,2025,JI_F5_T1_BU,Jug Island,Nicole,Hannah,T1_Blk_U,3,5.2,"cobble, shell, rock",mix,14:15,14:33,
+Feb,5,2025,JI_F5_T2_BU,Jug Island,Nicole,Hannah,T2_Blk_U,3,6.4,sandy,soft,14:34,14:42,few rocks
+Feb,5,2025,JI_F5_T1_BD,Jug Island,Hannah,Nicole,T1_Blk_D,3,5.1,"cobble, shell, rock",mix,14:14,14:31,
+Feb,5,2025,JI_F5_T2_BD,Jug Island,Hannah,Nicole,T2_Blk_D,3,6.4,sandy,soft,14:33,14:42,few rocks
+Mar,17,2025,BP_M17_T1_BU,Best Point,Claire,Nicole,T1_Blk_U,3,7,rockwalls over sand,mix,9:58,10:10,
+Mar,17,2025,BP_M17_T2_BU,Best Point,Claire,Nicole,T2_Blk_U,3,6.8,sandy w/ rock sheld,mix,10:13,10:26,
+Mar,17,2025,BP_M17_T1_BD,Best Point,Nicole,Claire,T1_Blk_D,3,7.8,sand and wall,mix,10:01,10:16,
+Mar,17,2025,BP_M17_T2_BD,Best Point,Nicole,Claire,T2_Blk_D,3,8.3,"bedrock, half sand ",mix,10:17,10:30,
+Mar,19,2025,CP_M19_T1_BD,Cate's Park,Em,Nicole,T1_Blk_D,1.5,8,soft sediment and rocks/boulders,mix,11:40,12:01,had to shift by 1.3m due to transect tape issue
+Mar,19,2025,CP_M19_T2_BD,Cate's Park,Em,Nicole,T2_Blk_D,1.5,7,soft sediment and rocks/boulders,mix,12:02,12:14,
+Mar,19,2025,CP_M19_T1_BU,Cate's Park,Nicole,Em,T1_Blk_U,1.5,8.7,sand and cobble/boulder,mix,11:41,12:01,
+Mar,19,2025,CP_M19_T2_BU,Cate's Park,Nicole,Em,T2_Blk_U,1.5,7,more sand and smaller rocks and algae cover,soft,12:02,12:16,
+Mar,26,2025,LR_M26_T1_BU,Lone Rock,Claire,Nicole,T1_Blk_U,2,6.2,"rock wall, sand patches",hard,9:57,10:10,
+Mar,26,2025,LR_M26_T2_BU,Lone Rock,Claire,Nicole,T2_Blk_U,2,6,sand and some rock wall,mix,10:20,10:35,
+Mar,26,2025,LR_M26_T1_BD,Lone Rock,Nicole,Claire,T1_Blk_D,2,7.6,rock wall and sand,mix,9:58,10:16,
+Mar,26,2025,LR_M26_T2_BD,Lone Rock,Nicole,Claire,T2_Blk_D,2,7.5,sand and rock wall,mix,10:20,10:39,
+Mar,31,2025,MI_M31_T1_BU,Moody Inlet,Nicole,Claire,T1_Blk_U,1,6.5,silt mud some shells,soft,10:07,10:09,
+Mar,31,2025,MI_M31_T2_BU,Moody Inlet,Nicole,Claire,T2_Blk_U,1,6,silt mud some shells,soft,10:11,10:14,
+Mar,31,2025,MI_M31_T1_BD,Moody Inlet,Claire,Nicole,T1_Blk_D,1.5,6.5,sand/silt/mud,soft,10:06,10:11,
+Mar,31,2025,MI_M31_T2_BD,Moody Inlet,Claire,Nicole,T2_Blk_D,1.5,6.6,sand/silt/mud,soft,10:12,10:16,
+Apr,5,2025,GR_A5_T1_BU,Grey Rock Island,Claire,Nicole,T1_Blk_U,2.5,6.5,rock wall,hard,11:20,11:36,
+Apr,5,2025,GR_A5_T2_BU,Grey Rock Island,Claire,Nicole,T2_Blk_U,2.5,5,rock wall and sand,mix,11:45,12:05,
+Apr,5,2025,GR_A5_T1_BD,Grey Rock Island,Nicole,Claire,T1_Blk_D,2.5,8,rock wall and sand,mix,11:20,11:38,
+Apr,5,2025,GR_A5_T2_BD,Grey Rock Island,Nicole,Claire,T2_Blk_D,2.5,6.8,"rock wall, sand, boulder",mix,11:45,12:06,
+Apr,9,2025,BC_A9_T1_BD,Belcarra Bay,Nicole,Amelia ,T1_Blk_D,1.5,7.5,silt and few boulders,mix,12:48,13:03,
+Apr,9,2025,BC_A9_T2_BD,Belcarra Bay,Nicole,Amelia ,T2_Blk_D,1.5,8,silt and sand,soft,13:07,13:20,
+Apr,9,2025,BC_A9_T1_BU,Belcarra Bay,Amelia ,Nicole,T1_Blk_U,1.5,6.7,silt and few boulders,soft,11:54,12:16,"amelia time may have been diff synced, ask claire if it matters"
+Apr,9,2025,BC_A9_T2_BU,Belcarra Bay,Amelia ,Nicole,T2_Blk_U,1.5,8.3,soft with boulders,soft,12:16,12:32,we arent using this really so probably fine 
