@@ -1,8 +1,6 @@
 month,day,year,location,dive_id,diver_1,diver_2,roving_survey,visibility,substrate,substrate_level,start_time,end_time,tide,notes,
 Jan,6,2025,Twin Island,TI_J6_R1,Nicole,Claire,1,3,sand/boulder,mix,14:25,14:58,,added 3minutes because pencil broke,
 Jan,6,2025,Jug Island,JI_J6_R1,Nicole,Claire,1,2.5,sandy/rocks,mix,15:55,16:25,,,
-Jan ,20,2025,Boulder Island,BI_J20_R1,Nicole,Em,1,3.5,sandy ,soft,10:43,11:13,,some current picked up near end of dive,
-Jan ,20,2025,Jug Island,JI_J20_R2,Nicole,Em,2,4,shells/sand,soft,14:08,14:38,,,
 Jan,27,2025,Best Point,BP_J27_R1,Nicole,Claire,1,6,silt and rocks,soft,10:08,10:38,,very silt and rocks,
 Jan,27,2025,Lone Rock,LR_J27_R1,Nicole,Claire,1,4,sand and boulders,mix,11:37,12:09,,crab held onto my tape so we added 2 minutes,
 Feb,5,2025,Boulder Island,BI_F5_R1,Nicole,Hannah,1,3.5,sand,soft,10:29,10:59,,,left side of island

@@ -1,4 +1,4 @@
-Month,Year,Location,Depth_low,Depth_upper,Diameter,Radius,Depth_found,Feeding,Notes
+month,year,location,depth_low,depth_upper,diameter,radius,depth,feeding,notes
 November,2010,Moody Inlet,3,6,47,N/A,N/A,N/A,
 November,2010,Moody Inlet,3,6,50,N/A,N/A,N/A,
 November,2010,Moody Inlet,3,6,54,N/A,N/A,N/A,
