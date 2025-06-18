@@ -1,6 +1,6 @@
-#Title: Model 1 Pink Sea Star
-#Author: Nicole Yang
-#Date: May 22, 2025
+#Title: Modelling
+#Author: Nicole
+#Date: June 12, 2025
 
 library(usethis)
 use(git)
@@ -13,119 +13,70 @@ library(ggplot2)
 library(tidyr)
 library(RColorBrewer)
 library(DHARMa)
-
-# Load CSV files 
-transect_abundance <- read.csv("present_raw_data/PS_2025_Transect/PS_Transect_Abundance.csv")
-transect_abundance
-transect_measurement <- read.csv("present_raw_data/PS_2025_Transect/PS_Transect_Measurements.csv")
-transect_measurement
-transect_location_info <- read.csv("present_raw_data/PS_2025_Transect/PS_Transect_Location_Info.csv") 
-transect_location_info
-
-rov_abundance <- read.csv("present_raw_data/PS_2025_ROV/PS_ROV_Abundance.csv")
-rov_abundance
-rov_measurement <- read.csv("present_raw_data/PS_2025_ROV/PS_ROV_Measurments.csv") 
-rov_measurement
-rov_location_info <- read.csv("present_raw_data/PS_2025_ROV/PS_ROV_Location_Info.csv")
-rov_location_info
-
-historic_measurement <- read.csv("historic_raw_data/PS_Historic_Data.csv")
-
-##### CLEANING DATA SHEETS ###### 
-rov_measurement
-# isolate location with the diameter measurements for both historic and present 
+library(glmmTMB)
+library(ggeffects)
 
 
+##### MODEL 1: HISTORICAL VS PRESENT ####### 
+##load .csv
+mod1A_data <- read_csv("./manipulated_data/past_present_pop_abundances.csv")
 
-unique(rov_measurement$dive_id)
-# group together dive ID's to site names 
-rov_measurement$dive_id <- gsub("^(TI_J6_R1|TI_F5_R2)$", "Twin Island", rov_measurement$dive_id, ignore.case = TRUE)
-rov_measurement$dive_id <- gsub("^(JI_J6_R1|JI_M12_R2)$", "Jug Island", rov_measurement$dive_id, ignore.case = TRUE)
-rov_measurement$dive_id <- gsub("^(BI_F5_R1|BI_M12_R2)$", "Boulder Island", rov_measurement$dive_id, ignore.case = TRUE)
-rov_measurement$dive_id <- gsub("^(BP_J27_R1|BP_M26_R2)$", "Best Point", rov_measurement$dive_id, ignore.case = TRUE)
-rov_measurement$dive_id <- gsub("^(LR_J27_R1|LR_M17_R2)$", "Lone Rock Point", rov_measurement$dive_id, ignore.case = TRUE)
-rov_measurement$dive_id <- gsub("^(BB_M17_R1|BB_A5_R2)$", "Bedwell Bay", rov_measurement$dive_id, ignore.case = TRUE)
-rov_measurement$dive_id <- gsub("^(MI_M19_R1|MI_A5_R2)$", "Moody Inlet", rov_measurement$dive_id, ignore.case = TRUE)
-rov_measurement$dive_id <- gsub("^(GR_M19_R1|GR_A9_R2)$", "Grey Rocks Island", rov_measurement$dive_id, ignore.case = TRUE)
-rov_measurement$dive_id <- gsub("^(CP_M31_R1|CP_A9_R2)$", "Cate's Park", rov_measurement$dive_id, ignore.case = TRUE)
-rov_measurement$dive_id <- gsub("^(BC_M26_R1|BC_M31_R2)$", "Belcarra Bay", rov_measurement$dive_id, ignore.case = TRUE)
-rov_measurement$diameter <- gsub("^(N/A)$", "0", rov_measurement$diameter, ignore.case = TRUE) #turned N/a into 0 values so it can be numeric 
+## remove NA
+mod1A_data_clean <- na.omit(mod1A_data) %>%
+  mutate(location = as.factor(location),
+         time_period = as.factor(time_period)) %>%
+  as.data.frame()
 
-#double check site names are the same for both csv files 
-unique(rov_measurement$location)
-unique(historic_measurement$location)
+str(mod1A_data_clean)
 
-#try to plot, not what we want though 
-## sample plot for present sites and diameter, raw data 
-ggplot(rov_measurement, aes(x = location, y = diameter)) +
-  geom_point() +
-  ggtitle("location and diameter") +
-  xlab("location") +
-  ylab("Diameter")
+#checkong histogram for distribution of data
+ggplot(mod1A_data, aes(x = number)) +
+  geom_histogram(bins = 10)  
+
+## selecting poisson distribution for count base response variable (because of histogram results)
 
 
-
-##sample plot for historic sites and diameter, raw data
-ggplot(historic_measurement, aes(x = location, y = diameter)) +
-  geom_point() +
-  ggtitle("location and diameter") +
-  xlab("location") +
-  ylab("Diameter")
-
-#classification of each variable 
-class(rov_measurement$diameter)
-rov_measurement$diameter <- as.numeric(as.character(rov_measurement$diameter))
-
-#overall averages for each sheet 
-mean(rov_measurement$diameter, na.rm = TRUE) #average for overall diameter for present
-mean(historic_measurement$diameter, na.rm = TRUE) #average for overall diameter for historic
-
-#for each site average?? 
-data_2<- rov_measurement %>% 
-  filter(location == "Cate's Park")
-mean(data_2$diameter)
-
-#isolate by 1 site, keep location and diameter (2 columns) in this dataframe
-location_df <- rov_measurement %>%
-  filter(location == "Bedwell Bay") %>%
-  group_by(location, diameter) %>%
-  summarise(total = n()) 
-
-mean(location_df$diameter, na.rm = TRUE)
-
-#plot for 1 site?? with diameter frequencies?? 
-ggplot(location_df, aes(x = diameter, y = total)) +
-  geom_point() +
-  ggtitle("location and diameter") +
-  xlab("diameter") +
-  ylab("frequency")
+##fitting glmm with a poisson distribution 
 
 
-#merging the 2 csv files 
-rov_present <- rov_measurement[, c("location", "diameter")]
-rov_historic <- historic_measurement[, c("location", "diameter")]
+##create model 1A
+mod1A <- glmmTMB(number ~ time_period + (1|location), 
+                 family = poisson(link='log'), #distribution of the data
+                 data = mod1A_data_clean)
+                 
+##checking model fit with DHARMA
+plot(simulateResiduals(mod1A))
 
+##assess model output 
+summary(mod1A)
 
+##plot the model, if in glmm (or non linear space) need to backtransform the data before plotting it 
+#ploting not the values of the data, of the linked model space, but how it is used in the model 
+#looking at the "linear" version of what u are presenting 
 
-combined_rov <- cbind(rov_present, rov_historic)
+##predicting 
+predict_mod1A_data <- ggpredict(mod1A, terms = "time_period") %>% #if many predictors, more terms 
+         rename(time_period = x)
 
-##### MODEL 1: HISTORICAL VS PRESENT #######
+##now plot these predictions 
+## historic, present, abundance at each site 
+##visualizing not per site but per time frame 
 
-#isolate data set for 1 site
-data_2<- rov_measurement %>% 
-  filter(dive_id == "Cate's Park")
+#to plot raw data and predicted values at same time 
+ggplot(mod1A_data_clean, aes(x = time_period, y = number)) +
+  geom_point() + ##this and line above plots raw data
+  geom_pointrange(data = predict_mod1A_data, #adding predictors to graph with std
+                  aes(x = time_period, y = predicted, ymin = conf.low, ymax = conf.high)) +
+  theme_classic()
 
-#isolate historic data set for 1 site
-data_CP<- historic_measurement %>% 
-  filter(Location == "Cate's Park")
-
+# lighter point- alpha values
+# clearer points- jitter them
+# make predicted values bigger 
 
 
 
 ##### MODEL 2: ROV VS TRANSECT ##########
 
-
-
-
-
 ##### MODEL 3: LIFE HISTORY: PRESENT #######
+
+
