@@ -30,7 +30,7 @@ mod1A_data_clean <- na.omit(mod1A_data) %>%
 str(mod1A_data_clean)
 
 #checkong histogram for distribution of data
-ggplot(mod1A_data, aes(x = number)) +
+ggplot(mod1A_data_clean, aes(x = number_min)) +
   geom_histogram(bins = 10)  
 
 ## selecting poisson distribution for count base response variable (because of histogram results)
@@ -38,8 +38,8 @@ ggplot(mod1A_data, aes(x = number)) +
 ##DISTRIBUTION CHOSEN: Poisson
 
 ##create model 1AA
-mod1A <- glmmTMB(number ~ time_period + (1|location), 
-                 family = poisson(link='log'), #distribution of the data
+mod1A <- glmmTMB(number_min ~ time_period + (1|location), 
+                 family = tweedie(link ='log'), #distribution of the data
                  data = mod1A_data_clean)
                  
 ##checking model fit with DHARMA
@@ -62,11 +62,11 @@ predict_mod1A_data <- ggpredict(mod1A, terms = "time_period") %>%
 
 #to PLOT raw data and predicted values at same time 
 ggplot() +
-  labs(x = "Time Period", y = "Abundance") +
+  labs(x = "Time Period", y = "number of stars/minute") +
   theme_bw() +
   theme(panel.grid.minor = element_blank()) +
   geom_point(data= mod1A_data_clean, 
-             aes(x = time_period, y = number, colour = time_period),
+             aes(x = time_period, y = number_min, colour = time_period),
              position=position_jitter(width=0.2), alpha=0.4) +
   geom_pointrange(data = predict_mod1A_data, #adding predictors to graph with std
                   aes(x = time_period, y = predicted, ymin = conf.low, ymax = conf.high,
@@ -94,8 +94,13 @@ mod1B_data_clean <- na.omit(mod1B_data) %>%
 
 str(mod1B_data_clean)
 
+## filter wasting periods: pre and present 
+mod1B_filter_wasting <- mod1B_data_clean %>%
+  filter(wasting != "post") %>%
+  droplevels()
+
 #checkong histogram for distribution of data
-ggplot(mod1B_data, aes(x = number)) +
+ggplot(mod1B_filter_wasting, aes(x = number_min)) +
   geom_histogram(bins = 10)  
 
 ## choosing distribution: still count data, poison still?? 
@@ -103,9 +108,9 @@ ggplot(mod1B_data, aes(x = number)) +
 ##DISTRIBUTION CHOSEN: poisson???
 
 ##create model 1B
-mod1B <- glmmTMB(number ~ wasting + (1|location), 
-                 family = poisson(link='log'), #distribution of the data
-                 data = mod1B_data_clean)
+mod1B <- glmmTMB(number_min ~ wasting + (1|location), 
+                 family = tweedie(link='log'), #distribution of the data
+                 data = mod1B_filter_wasting)
 
 ##checking model fit with DHARMA
 plot(simulateResiduals(mod1B))
@@ -128,38 +133,164 @@ predict_mod1B_data <- ggpredict(mod1B, terms = "wasting") %>% #if many predictor
 
 #to PLOT raw data and predicted values at same time  **FIX ORDER of categories (should be pre post present)
 ggplot() +
-  labs(title = "abundance with wasting timeframe", x = "wasting categories", y = "Abundance") +
+  labs(title = "abundance with wasting timeframe", x = "wasting categories", y = "number of stars/minute") +
   theme_bw() +
   theme(panel.grid.minor = element_blank()) +
-  geom_point(data= mod1B_data_clean, 
-             aes(x = wasting, y = number, colour = wasting),
+  geom_point(data= mod1B_filter_wasting, 
+             aes(x = wasting, y = number_min, colour = wasting),
              position=position_jitter(width=0.2), alpha=0.4) +
   geom_pointrange(data = predict_mod1B_data, #adding predictors to graph with std
                   aes(x = wasting, y = predicted, ymin = conf.low, ymax = conf.high,
                       color=wasting),
                   shape=16, size=0.7) +
   scale_colour_manual(values = c("#D5A021",
-                                 "#2C5530",
-                                 "#3F88C5"))
+                                 "#2C5530"))
 
-##### ABUND_MOD1C:  WITH WASTING(POST AND PRESENT)
+##### ABUND_MOD1C:  WITH WASTING(POST AND PRESENT) #####
+##load .csv
+mod1C_data <- read_csv("./manipulated_data/past_present_pop_abundances.csv")
+
+## remove NA
+mod1C_data_clean <- na.omit(mod1C_data) %>%
+  mutate(location = as.factor(location),
+         time_period = as.factor(time_period),
+         wasting = factor(wasting, levels=c("pre", "post", "present")),
+         year = as.numeric(year)) %>%
+  as.data.frame()
+
+str(mod1C_data_clean)
+
+## filter wasting periods: post and present 
+mod1C_filter_wasting <- mod1C_data_clean %>%
+  filter(wasting != "pre") %>%
+  droplevels()
+
+#checkong histogram for distribution of data
+ggplot(mod1C_filter_wasting, aes(x = number_min)) +
+  geom_histogram(bins = 10)  
+
+## choosing distribution: still count data, poison still?? 
+
+##DISTRIBUTION CHOSEN: poisson???
+
+##create model 1B
+mod1C <- glmmTMB(number_min ~ wasting + (1|location), 
+                 family = tweedie(link='log'), #distribution of the data
+                 data = mod1C_filter_wasting)
+
+##checking model fit with DHARMA
+plot(simulateResiduals(mod1C))
+
+##assess model output 
+summary(mod1C)
+
+##plot the model, if in glmm (or non linear space) need to backtransform the data before plotting it 
+#ploting not the values of the data, of the linked model space, but how it is used in the model 
+#looking at the "linear" version of what u are presenting 
+
+##predicting 
+predict_mod1C_data <- ggpredict(mod1C, terms = "wasting") %>% #if many predictors, more terms 
+  rename(wasting = x) 
+
+
+##now plot these predictions 
+## historic, present, abundance at each site 
+##visualizing not per site but per time frame
+
+#to PLOT raw data and predicted values at same time  **FIX ORDER of categories (should be pre post present)
+ggplot() +
+  labs(title = "abundance with wasting timeframe", x = "wasting categories", y = "number of stars/minute") +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank()) +
+  geom_point(data= mod1C_filter_wasting, 
+             aes(x = wasting, y = number_min, colour = wasting),
+             position=position_jitter(width=0.2), alpha=0.4) +
+  geom_pointrange(data = predict_mod1C_data, #adding predictors to graph with std
+                  aes(x = wasting, y = predicted, ymin = conf.low, ymax = conf.high,
+                      color=wasting),
+                  shape=16, size=0.7) +
+  scale_colour_manual(values = c("#3F88C5",
+                                 "#2C5530"))
+
 ##### ABUND_MOD1D: DATE  ######
+##load .csv
+mod1D_data <- read_csv("./manipulated_data/past_present_pop_abundances.csv")
+
+## remove NA
+mod1D_data_clean <- na.omit(mod1D_data) %>%
+  mutate(location = as.factor(location),
+         time_period = as.factor(time_period),
+         wasting = factor(wasting, levels=c("pre", "post", "present")),
+         year = as.numeric(year)) %>%
+  as.data.frame()
+
+
+## do i keep the wasting factor??? 
+str(mod1D_data_clean)
+
+
+#checkong histogram for distribution of data
+ggplot(mod1D_data_clean, aes(x = number_min)) +
+  geom_histogram(bins = 10)  
+
+## choosing distribution: still count data, poison still?? 
+
+##DISTRIBUTION CHOSEN: poisson???
+
+##create model 1B
+mod1D <- glmmTMB(number_min ~ date + (1|location), 
+                 family = tweedie(link='log'), #distribution of the data
+                 data = mod1D_data_clean)
+
+##checking model fit with DHARMA
+plot(simulateResiduals(mod1D))
+
+##assess model outputD
+summary(mod1D)
+
+##plot the model, if in glmm (or non linear space) need to backtransform the data before plotting it 
+#ploting not the values of the data, of the linked model space, but how it is used in the model 
+#looking at the "linear" version of what u are presenting 
+
+##predicting 
+predict_mod1D_data <- ggpredict(mod1D, terms = "wasting") %>% #if many predictors, more terms 
+  rename(wasting = x) 
+
+
+##now plot these predictions 
+## historic, present, abundance at each site 
+##visualizing not per site but per time frame
+
+#to PLOT raw data and predicted values at same time  **FIX ORDER of categories (should be pre post present)
+ggplot() +
+  labs(title = "abundance with date timeframe", x = "date", y = "number of stars/minute") +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank()) +
+  geom_point(data= mod1D_filter_wasting, 
+             aes(x = wasting, y = number_min, colour = wasting),
+             position=position_jitter(width=0.2), alpha=0.4) +
+  geom_pointrange(data = predict_mod1C_data, #adding predictors to graph with std
+                  aes(x = wasting, y = predicted, ymin = conf.low, ymax = conf.high,
+                      color=wasting),
+                  shape=16, size=0.7) +
+  scale_colour_manual(values = c("#3F88C5",
+                                 "#2C5530"))
+
 ###### DIAM_MOD1A:  time period *fix graph asthetics ######
-
 #load csv data 
-model1C_data <- read.csv("./manipulated_data/past_present_indiv_diameter.csv")
+model_D1A_data <- read.csv("./manipulated_data/past_present_indiv_diameter.csv")
 
-mod1C_data_clean <- na.omit(model1C_data) %>%
+model_D1A_data_clean <- na.omit(model_D1A_data) %>%
   mutate(location = as.factor(location),
          time_period = as.factor(time_period),
          wasting = factor(wasting, levels=c("pre", "post", "present")), #makes ordercertain way
          diameter = as.numeric(diameter)) %>%
   as.data.frame()
 
-str(mod1C_data_clean)
+str(model_D1A_data_clean)
 
 #checkong histogram for distribution of data
-ggplot(model1C_data, aes(x = diameter)) +
+ggplot(model_D1A_data_clean, aes(x = diameter)) +
   geom_histogram(bins = 10)  
 
 
@@ -168,20 +299,20 @@ ggplot(model1C_data, aes(x = diameter)) +
 ##DISTRIBUTION CHOSEN: tweedie distribution 
 
 ##create model 1C
-mod1C <- glmmTMB(diameter ~ time_period + (1|location), 
+modD1A <- glmmTMB(diameter ~ time_period + (1|location), 
                  family = tweedie(link = "log"), #distribution of the data
-                 data = mod1C_data_clean)
+                 data = model_D1A_data_clean)
 
 ##checking model fit with DHARMA , its fine even with red
-plot(simulateResiduals(mod1C))
+plot(simulateResiduals(modD1A))
 
 ## this one looks alright, maybe try others 
 
 ##assess model output 
-summary(mod1C)
+summary(modD1A)
 
 ##predicting 
-predict_mod1C_data <- ggpredict(mod1C, terms = "time_period") %>% #if many predictors, more terms 
+predict_modD1A_data <- ggpredict(modD1A, terms = "time_period") %>% #if many predictors, more terms 
          rename(time_period = x)
 
 #to plot raw data and predicted values at same time 
@@ -190,10 +321,10 @@ ggplot() +
   labs(title = "size of star as time period", x = "Time Period", y = "Diameter (cm)") +
   theme_classic() +
    theme(panel.grid.minor = element_blank()) +
-  geom_point(data= mod1C_data_clean, 
+  geom_point(data= model_D1A_data_clean, 
              aes(x = time_period, y = diameter, colour = time_period),
              position=position_jitter(width=0.2), alpha=0.2) +
-  geom_pointrange(data = predict_mod1C_data, #adding predictors to graph with std
+  geom_pointrange(data = predict_modD1A_data, #adding predictors to graph with std
                   aes(x = time_period, y = predicted, ymin = conf.low, ymax = conf.high,
                       color=time_period), 
                   shape=16, size=0.7) +
@@ -202,8 +333,66 @@ ggplot() +
 
 
 ###### DIAM_MOD1B: WASITN PRE AND PRESENT ######## 
+#load csv data 
+model_D1B_data <- read.csv("./manipulated_data/past_present_indiv_diameter.csv")
+
+model_D1B_data_clean <- na.omit(model_D1B_data) %>%
+  mutate(location = as.factor(location),
+         time_period = as.factor(time_period),
+         wasting = factor(wasting, levels=c("pre", "post", "present")), #makes ordercertain way
+         diameter = as.numeric(diameter)) %>%
+  as.data.frame()
+
+str(model_D1B_data_clean)
+
+model_D1B_filter_wasting <- model_D1B_data_clean %>%
+  filter(wasting != "post") %>%
+  droplevels()
+
+#checkong histogram for distribution of data
+ggplot(model_D1B_filter_wasting, aes(x = diameter)) +
+  geom_histogram(bins = 10)  
+
+
+
+##DISTRIBUTION CHOSEN: tweedie distribution 
+
+##create model D1B
+modD1B <- glmmTMB(diameter ~ wasting + (1|location), 
+                  family = tweedie(link="log"), #distribution of the data
+                  data = model_D1B_filter_wasting)
+
+##checking model fit with DHARMA , its fine even with red
+plot(simulateResiduals(modD1B))
+
+## this one looks alright, maybe try others 
+
+##assess model output 
+summary(modD1B)
+
+##predicting 
+predict_modD1B_data <- ggpredict(modD1B, terms = "wasting") %>% #if many predictors, more terms 
+  rename(wasting = x)
+
+#to plot raw data and predicted values at same time 
+
+ggplot() +
+  labs(title = "size of star as time period", x = "Time Period", y = "Diameter (cm)") +
+  theme_classic() +
+  theme(panel.grid.minor = element_blank()) +
+  geom_point(data= model_D1B_filter_wasting, 
+             aes(x = wasting, y = diameter, colour = wasting),
+             position=position_jitter(width=0.2), alpha=0.2) +
+  geom_pointrange(data = predict_modD1B_data, #adding predictors to graph with std
+                  aes(x = wasting, y = predicted, ymin = conf.low, ymax = conf.high,
+                      color=wasting), 
+                  shape=16, size=0.7) +
+  scale_colour_manual(values = c("#C82D47",
+                                 "#5BA054"))
 ###### DIAM_MOD1C:WASTING POST AND PRESENT########
 ###### DIAM_MOD1D:DATE #######
+
+
 ###### MODEL 1D: past present, diameter, wasting, 3 levels ##### 
 #load csv data 
 model1D_data <- read.csv("./manipulated_data/past_present_indiv_diameter.csv")
