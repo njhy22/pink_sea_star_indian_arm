@@ -17,24 +17,28 @@ library(DHARMa)
 ######## Load CSV Files ######
 
 # LOAD transect data sheets 
+#transect abundance sheet
 transect_abundance <- read.csv("present_raw_data/PS_2025_Transect/PS_Transect_Abundance.csv")
 transect_abundance
 
+#transect measurements (diameters sea stars)
 transect_measurement <- read.csv("present_raw_data/PS_2025_Transect/PS_Transect_Measurements.csv")
 transect_measurement
 
+#transect site data
 transect_location_info <- read.csv("present_raw_data/PS_2025_Transect/PS_Transect_Location_Info.csv") 
 transect_location_info
 
 
-# LOAD ROV data sheets 
+# LOAD present ROV data sheets 
 
+# abundances
 rov_abundance <- read.csv("present_raw_data/PS_2025_ROV/PS_ROV_Abundance.csv")
 
-
+# diameters
 rov_measurement <- read.csv("present_raw_data/PS_2025_ROV/PS_ROV_Measurments.csv") 
 
-
+# metadata
 rov_location_info <- read.csv("present_raw_data/PS_2025_ROV/PS_ROV_Location_Info.csv")
 rov_location_info
 
@@ -44,31 +48,259 @@ historic_measurement <- read.csv("historic_raw_data/PS_Historic_Data.csv")
 historic_measurement
 
 
-#checking site locations and naming 
-unique(historic_measurement$location)
-unique(rov_abundance$location)
-unique(rov_measurement$dive_id)
-
-
-
-##### CLEANING DATA SHEETS ###### 
-
 #FILTER OUT Jan 20 ROV DIVES for rov measurmment, location info, and abundance sheets
-rov_measurement_clean <- rov_measurement %>%
+rov_measurement_jan20_clean <- rov_measurement %>%
   filter(!dive_id %in% c("JI_J20_R2", "BI_J20_R1"))
 
-rov_abundance_clean <- rov_abundance %>%
+rov_abundance_jan20_clean <- rov_abundance %>%
   filter(!dive_id %in% c("JI_J20_R2", "BI_J20_R1"))
 
-rov_location_info_clean <- rov_location_info %>%
+rov_location_info_jan20_clean <- rov_location_info %>%
   filter(!dive_id %in% c("JI_J20_R2", "BI_J20_R1"))
 
 
-###
+##### CLEAN abundance DATA FRAMES (And save csv for models) #####
+#join metadata to present ROV data sheets #####
+# left joining
+rov_abundance_withmeta <- rov_abundance_jan20_clean %>%
+  left_join(rov_location_info_jan20_clean, by="dive_id") %>%
+  dplyr::select(-c(location.y, notes, X)) %>%
+  rename(location = location.x)
+
+# creating date time column   
+#created survey time column 
+#creating abundance/minute column 
+rov_abundance_date <- rov_abundance_withmeta %>%
+  mutate(month_num = case_when(month == "Jan" ~ "01",
+                               month == "Jan " ~ "01",
+                               month == "Feb" ~ "02",
+                               month == "Mar" ~ "03",
+                               month == "Apr" ~ "04")) %>%
+  unite(col = datefull, c("year", "month_num", "day"), sep = "-", remove = FALSE) %>%
+  mutate(date = as.Date(datefull)) %>%
+  filter(species == "Pisaster brevispinus") %>%
+  add_column(time_period = "present") %>%
+  add_column(time = as.numeric(30)) %>%
+  mutate(number_min = number/time)
+
+#add dates to historic sheet, add time period 
+historic_measurement_date <- historic_measurement %>%
+  mutate(month_num = case_when(month == "March" ~ "03",
+                               month == "April" ~ "04",
+                               month == "July" ~ "07",
+                               month == "November" ~ "11")) %>%
+  unite(col = datefull, c("year", "month_num", "day"), sep = "-", remove = FALSE) %>%
+  mutate(date = as.Date(datefull)) %>%
+  add_column(time_period = "past")
+
+historic_abundance_for_plot <- historic_measurement_date %>%
+  group_by(month, year, date, time, location, diver) %>%
+  count(location, diver) %>%
+  rename("number" = "n") %>%
+  add_column(time_period = "past") %>% 
+  add_column(species = "Pisaster brevispinus") %>%
+  ungroup() %>%
+  as.data.frame() 
+
+## make abundance # of stars/minute of survey 
+historic_abund_per_min <- historic_abundance_for_plot %>%
+  mutate(number_min = number/time)
+
+# QUICK PLOT abundance
+ggplot(data = historic_abund_per_min, aes(x= date, y = number_min)) +
+  geom_point()
+
+# combine data frames for ABUNDANCE
+clean_abund_present_raw <- rov_abundance_date %>%
+  select(c(location, date, time_period, number, number_min, time, species)) %>%
+  filter(species == "Pisaster brevispinus") 
+
+#HISTORIC DATA, no need to filter because only pink sea stars 
+clean_abund_historic_raw <- historic_abund_per_min %>%
+  select(c(location, date, time_period, number, time, number_min, species))
+
+#MERGE ABUNDANCE COUNTS from 2 datashets into 1 (past and present data)
+combined_abund_raw_plot <- full_join(clean_abund_historic_raw, clean_abund_present_raw)
+print(combined_abund_raw_plot)
+
+combined_abund_complete <- combined_abun_raw_plot %>%
+  mutate(years_past = (2025 - as.numeric(year)),
+         wasting = case_when(year == "2010"|
+                               year == "2011"|
+                               year == "2012"|
+                               year == "2013" ~ "pre",
+                             year == "2014"|
+                               year == "2015" ~ "post",
+                             year == "2025" ~ "present"))
+
+##
+#SAVE .CSV FOR ABUNDANCE 
+write.csv(combined_abund_RAW_PLOT, "./manipulated_data/past_present_pop_abundances.csv", row.names=F)
+
+
+
+##### CLEAN DIAMETER DATA FRAMES (And save csv for models) ##### 
+# for DIAMETER in PRESENT ROVS TO metadata sheet
+# left joining
+rov_measurement_withmeta <- rov_measurement_jan20_clean %>%
+  left_join(rov_location_info_jan20_clean, by="dive_id") %>%
+  dplyr::select(-c(location.y)) %>%
+  rename(location = location.x)
+
+# creating date time column **(NEED to clean column names)**
+rov_measurement_date <- rov_measurement_withmeta %>%
+  mutate(month_num = case_when(month == "Jan" ~ "01",
+                               month == "Jan " ~ "01",
+                               month == "Feb" ~ "02",
+                               month == "Mar" ~ "03",
+                               month == "Apr" ~ "04")) %>%
+  unite(col = datefull, c("year", "month_num", "day"), sep = "-", remove = FALSE) %>%
+  mutate(date = as.Date(datefull)) %>%
+  add_column(time_period = "present") 
+
+
+##### Join metadata to present ROV data sheets #####
+
+# left joining
+rov_abundance_withmeta <- rov_abundance_jan20_clean %>%
+  left_join(rov_location_info_jan20_clean, by="dive_id") %>%
+  dplyr::select(-c(location.y, notes, X)) %>%
+  rename(location = location.x)
+
+# creating date time column 
+#created survey time column 
+#creating abundance/minute column 
+rov_abundance_date <- rov_abundance_withmeta %>%
+  mutate(month_num = case_when(month == "Jan" ~ "01",
+                               month == "Jan " ~ "01",
+                               month == "Feb" ~ "02",
+                               month == "Mar" ~ "03",
+                               month == "Apr" ~ "04")) %>%
+  unite(col = datefull, c("year", "month_num", "day"), sep = "-", remove = FALSE) %>%
+  mutate(date = as.Date(datefull)) %>%
+  filter(species == "Pisaster brevispinus") %>%
+  add_column(time_period = "present") %>%
+  add_column(time = as.numeric(30)) %>%
+  mutate(number_min = number/time)
+  
+
+ggplot (data = rov_abundance_date, aes(x = date, y = number_min)) +
+  geom_point()
+
+# for DIAMETER in PRESENT ROVS TO metadata sheet
+# left joining
+rov_measurement_withmeta <- rov_measurement_jan20_clean %>%
+  left_join(rov_location_info_jan20_clean, by="dive_id") %>%
+  dplyr::select(-c(location.y)) %>%
+  rename(location = location.x)
+
+# creating date time column **(NEED to clean column names)**
+rov_measurement_date <- rov_measurement_withmeta %>%
+  mutate(month_num = case_when(month == "Jan" ~ "01",
+                               month == "Jan " ~ "01",
+                               month == "Feb" ~ "02",
+                               month == "Mar" ~ "03",
+                               month == "Apr" ~ "04")) %>%
+  unite(col = datefull, c("year", "month_num", "day"), sep = "-", remove = FALSE) %>%
+  mutate(date = as.Date(datefull)) %>%
+  add_column(time_period = "present") 
+
+ggplot (data = rov_measurement_date, aes(x = date, y = diameter)) +
+  geom_point()
+
+# creating date time column for HISTORIC DATA
+unique(historic_measurement$month)
+
+historic_measurement_date <- historic_measurement %>%
+  mutate(month_num = case_when(month == "March" ~ "03",
+                               month == "April" ~ "04",
+                               month == "July" ~ "07",
+                               month == "November" ~ "11")) %>%
+  unite(col = datefull, c("year", "month_num", "day"), sep = "-", remove = FALSE) %>%
+  mutate(date = as.Date(datefull)) %>%
+  add_column(time_period = "past")
+
+## QUICK PLOT diameter
+ggplot (data = historic_measurement_date, aes(x = date, y = diameter)) +
+  geom_point()
+
+# HISTORIC for ABUNDANCE **(must fix all of this with adjusted dates)
+historic_abundance_for_plot <- historic_measurement_date %>%
+  group_by(month, year, date, time, location, diver) %>%
+  count(location, diver) %>%
+  rename("number" = "n") %>%
+  add_column(time_period = "past") %>% 
+  add_column(species = "Pisaster brevispinus") %>%
+  ungroup() %>%
+  as.data.frame() 
+
+## make abundance # of stars/minute of survey 
+historic_abund_per_min <- historic_abundance_for_plot %>%
+  mutate(number_min = number/time)
+
+# QUICK PLOT abundance
+ggplot(data = historic_abund_per_min, aes(x= date, y = number_min)) +
+  geom_point()
+
+##### PLOT BOTH HISTORIC AND PRESENT RAW DATA DIAMETER AND ABUNDANCE #####
+# combine data frames for ABUNDANCE
+clean_abund_present_raw <- rov_abundance_date %>%
+  select(c(location, date, time_period, number, number_min, time, species)) %>%
+  filter(species == "Pisaster brevispinus") 
+
+#HISTORIC DATA, no need to filter because only pink sea stars 
+clean_abund_historic_raw <- historic_abund_per_min %>%
+  select(c(location, date, time_period, number, time, number_min, species))
+
+#MERGE ABUNDANCE COUNTS from 2 datashets into 1 (past and present data)
+combined_abund_raw_plot <- full_join(clean_abund_historic_raw, clean_abund_present_raw)
+print(combined_abund_raw_plot)
+
+
+###### plot raw data for abundance **add more defined dates for graph ######
+ggplot() +
+  geom_point(data = combined_abund_raw_plot, position = position_dodge(width = 1), #how close u want dots together or apart
+             aes(x = date, y = number_min, group = time_period, fill = time_period, color = time_period), shape = 21) + 
+  labs(title = "Abundance at each site in 2 time periods", x = "Date", y = "Number of Stars/Minute") +
+  theme_bw() +
+  scale_fill_manual(values = c("#C82D47", "#5BA054")) + 
+  scale_colour_manual(values = c("#C82D47", "#5BA054")) + #fill: only fill but shape must be fillable, color: only give the border
+  theme_classic() 
+
+### FOR DIAMETER ####
+# combine data frames for diameter
+clean_diameter_present_raw <- rov_measurement_date %>%
+  select(c(location, date, time_period, diameter)) %>%
+  na.omit(rov_measurement_date$diameter)
+
+di_cl_pre <- clean_diameter_present_raw %>%
+  mutate(diameter = as.numeric(diameter))
+
+
+#HISTORIC DATA, no need to filter because only pink sea stars 
+clean_diameter_historic_raw <- historic_measurement_date %>%
+  select(c(location, date, time_period, diameter))
+
+#MERGE ABUNDANCE COUNTS from 2 datashets into 1 (past and present data)
+combined_diameter_raw_plot <- full_join(clean_diameter_historic_raw, di_cl_pre)
+print(combined_diameter_raw_plot)
+
+#### plot raw data diameters ####
+ggplot() +
+  geom_point(data = combined_diameter_raw_plot, position = position_dodge(width = 1), #how close u want dots together or apart
+             aes(x = date, y = diameter, group = time_period, fill = time_period, color = time_period), shape = 21) + 
+  geom_segment(data = combined_diameter_raw_plot, position = position_dodge(width = 1),
+               aes(y = 0, yend = diameter, x = date, group = time_period, colour = time_period), linewidth = 1) +
+  labs(title = "Diameters at each site in 2 time periods", x = "Date", y = "Diameter (cm)") +
+  theme_bw() +
+  scale_fill_manual(values = c("#C82D47", "#5BA054")) + 
+  scale_colour_manual(values = c("#C82D47", "#5BA054")) + #fill: only fill but shape must be fillable, color: only give the border
+  theme_classic() 
+
 #####classification of present data individual sea stars #####
 #ROV
 ###
-rov_present <- rov_measurement_clean %>%
+rov_present <- rov_measurement_jan20_clean %>%
   mutate(diameter = as.numeric(diameter),
          depth_found = as.numeric(depth_found),
          location = as.factor(location),
@@ -136,8 +368,8 @@ historic_abundance <- rov_historic %>%
 ###
 #####PRESENT data population abundances cleaning #####
 ###
-str(rov_abundance_clean)
-present_abundance <- rov_abundance_clean %>%
+str(rov_abundance_jan20_clean)
+present_abundance <- rov_abundance_jan20_clean %>%
   mutate(species = as.factor(species),
          number = as.numeric(number),
          location = as.factor(location),
@@ -147,31 +379,27 @@ present_abundance <- rov_abundance_clean %>%
 
 str(present_abundance)
 
+rov_abundance_PS_only <- present_abundance %>%
+  select(c(location, species, number)) %>% 
+  filter(species == "Pisaster brevispinus") 
+
+str(rov_abundance_PS_only)
+
+### transect abundance cleaning
+str(transect_abundance)
+
+transect_abundance_PS_only <- transect_abundance %>%
+  select(c(location, species, number)) %>% 
+  filter(species == "Pisaster brevispinus") 
+
+
 ##### creating data frames for the models; need to create 4 of them ####
-###### LOCATION DATA Cleaning PRESENT ####
-
-### ROV Location Info### 
-
-str(rov_location_data)
-
-rov_location_data <- rov_location_info_clean %>%
-  mutate(visibility = as.numeric(visibility),
-         substrate_level = as.factor(substrate_level)) 
-
-
-### TRANSECT Location Info ###
-
-str(transect_location_info)
-transect_location_data <- transect_location_info %>%
-  mutate(visibility = as.numeric(visibility),
-         substrate_level = as.factor(substrate_level)) 
-
 ####Model_1A: data frame 1:historic and present site pop. abundances ####
 
 ### PRESENT data, to filter JUST PINK SEA STAR species
 unique(present_abundance$species)
 clean_abund_present <- present_abundance %>%
-  select(c(dive_id, location, year, time_period, number, species)) %>%
+  select(c(dive_id, location, month, day, year, time_period, number, species)) %>%
   filter(species == "Pisaster brevispinus") 
 
 #HISTORIC DATA, no need to filter because only pink sea stars 
@@ -192,6 +420,7 @@ combined_abund_full <- combined_abund %>%
                              year == "2014"|
                                year == "2015" ~ "post",
                              year == "2025" ~ "present"))
+
 
 #save csv of abundance counts of both historic and present in one 
 
@@ -229,19 +458,58 @@ write.csv(combined_diameter_full, "./manipulated_data/past_present_indiv_diamete
 
 #### model_2A: data frame 3: methods: present transect vs ROV site pop. abundances ####
 
-#for ROV 
+#for ROV CLEAN
 # categories: location, visibility, substrate_level, method(add column)
+rov_abundance_model2 <- rov_abundance_date %>%
+  mutate(species = as.factor(species),
+         number = as.numeric(number),
+         location = as.factor(location),
+         dive_id = as.factor(dive_id))
 
-str(rov_location_data)
-clean_rov_method <- rov_location_data %>%
-  select(c(location, visibility, substrate_level)) %>%
-  add_column(method = "roving")
+rov_model_2_abun_location <- rov_abundance_model2 %>%
+  select(c(location, visibility, substrate_level, dive_id, date, number, species)) %>%
+  mutate(visibility = as.numeric(visibility),
+         substrate_level = as.factor(substrate_level),
+         location = as.factor(location)) %>%
+  add_column(method = "roving") %>%
+  select(-species, -date)
+  
+str(rov_model_2_abun_location)
 
-# for TRANSECT: locating 
+#### for TRANSECT CLEAN ####
+str(transect_location_info)
+transect_location_data <- transect_location_info %>%
+  select(c(location, visibility, substrate_level, dive_id)) %>%
+  mutate(visibility = as.numeric(visibility),
+         substrate_level = as.factor(substrate_level),
+         location = as.factor(location)) %>%
+  add_column(method = "transect")
 
-## for ABUNDANCE number: ADDING ONTO combined method ??? data frame 3 
-#is it the abundance of each survey? or overall of each survey method?? (like add them together?) 
-#transect: comes from abundance counts (not measurements) 
+str(transect_location_data)
+
+##clean transect abundance sheet, isolate for pinks only 
+transect_numbers_mod2 <- transect_abundance %>%
+  mutate(location = as.factor(location)) %>%
+  filter(species == "Pisaster brevispinus ") 
+
+##### Join metadata to present TRANSECT data sheets #####
+
+# left joining transect sheets: location+abundance
+transect_abundance_withmeta <- transect_numbers_mod2 %>%
+  left_join(transect_location_data, by="dive_id") %>%
+  dplyr::select(-c(location.y)) %>%
+  rename(location = location.x)
+
+transect_abundance_date <- transect_abundance_withmeta %>%
+  mutate(number = as.numeric(number),
+         dive_id = as.factor(dive_id)) %>%
+  select(-species, -common_name)
+  
+
+### MERGE BOTH METHODS AND INFORMATION INTO 1 CSV (make sure all columns same )
+str(transect_abundance_date) ## boulder numbers are coming back wonky
+str(rov_model_2_abun_location)
+
 
 #### model_3A: data frame 4: present data, rov + transect: ecology model, individual diameters and feeding ####
 ## for model 3
@@ -266,9 +534,6 @@ clean_transect_ecology <- transect_measurement_clean_feeding_type %>%
 ###saving new .csv files for models 
 write.csv(nameofdataframe, "./projectfolder/manipulateddatafolder/newnamefordatafram.csv", row.names = F)
 
-
-
-###### MERGE CSV FILES ########
 
 #####FOR ROV DIAMETERS; HISTORIC AND PRESENT: just basic means and plot?####
 

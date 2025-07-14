@@ -1,4 +1,4 @@
-diver_id,location,species,common_name,number
+dive_id,location,species,common_name,number
 BI_J6_T1_B1,Boulder Island,Pisaster brevispinus ,Pink,12
 BI_J6_T1_B1,Boulder Island,Dermasterias imbricata,Leather ,24
 BI_J6_T2_B1,Boulder Island,Pisaster brevispinus ,Pink,12
