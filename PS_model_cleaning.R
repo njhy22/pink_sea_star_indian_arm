@@ -3,7 +3,6 @@
 #Date: May 22, 2025
 
 library(usethis)
-use(git)
 
 # Load packages
 library(tidyverse)
@@ -265,29 +264,105 @@ rov_model_2_abun_location <- rov_abundance_model2 %>%
          substrate_level = as.factor(substrate_level),
          location = as.factor(location)) %>%
   add_column(method = "roving") %>%
-  select(-species, -date)
+  select(-species, -date) 
 
 str(rov_model_2_abun_location)
 
 rov_average_abun <- rov_model_2_abun_location %>%
   group_by(location) %>%
-  summarise(mean_value = mean(number))
+ summarise(mean_value = mean(number)) 
+
+## dataframe JUST for raw data points/ surveys 
+rov_plot_abun <- rov_model_2_abun_location %>%
+  select(c(location, number, method))
+ 
 
 #### for TRANSECT clean (grouping and getting mean) ####
+#need to add both T1 together, then T2, then average the 2 
+## so each site will have 2 rows, then into1 row for average
+# but need the 2 rows (totals for T1 and T2) for the actual model 
+
+  
+  df <- transect_numbers_mod2 %>%
+    mutate(TransectGroup = str_extract(dive_id, "T[12]"))
+  
+df_summary <- df %>%
+  group_by(location, TransectGroup) %>%
+  summarise(
+    transect_raw_num = mean(number, na.rm = TRUE),
+    .groups = "drop") %>%
+  add_column(method = "transect")
+
+  
 transect_average_abun <- transect_abundance_date %>%
   group_by(location) %>%
-  summarise(mean_value = mean(number))
+  summarise(mean_value = mean(number)) 
 
-#combine ROV and TRANSECT abundances together into 1 dataframe
+#combine ROV and TRANSECT abundances together into 1 dataframe **NOT CORRECT 
 transect_rov_means_abun <- transect_average_abun %>%
-  left_join(rov_average_abun, by="location") 
+  left_join(rov_average_abun, by="location") %>%
+  rename(transect_mean = mean_value.x) %>%
+  rename(rov_mean = mean_value.y) 
+  mutate(abund_delta = rov_mean - transect_mean)
+
+  df_full <- df_summary %>%
+    left_join(rov_plot_abun, by="location")
+
+  
+  ## Plot: Ranked differences in abundance b/w methods, or just pliotting the values
+  # has the code for the line in the middle 
+ggplot() +
+  labs(x = "Abundance", y = "Site") +
+  theme_classic() +
+  theme(panel.grid.minor = element_blank()) +
+  geom_vline(xintercept = 10, linetype = "solid", color = "black") +
+  geom_point(data = df_summary, 
+    aes(x = Transect, y = location, color = "Transect")) +
+  geom_point(data = rov_abundance_date, 
+    aes(x = number, y = location, color = "ROV")) +
+  scale_colour_manual(values = c("Transect" = "#C4D4D3", "ROV" = "#341C1C"))
+
+## PLOT one method on x axis, 1 method on y axis *the transcts are not added together 
+ggplot() +
+  labs(x = "ROV", y = "TRANSECT") +
+  theme_classic() +
+  theme(panel.grid.minor = element_blank()) +
+  geom_point(data = transect_abundance_date, 
+             aes(x = number, y = location, color = "Transect")) +
+  geom_point(data = rov_abundance_date, 
+             aes(x = number, y = location, color = "ROV")) +
+  scale_colour_manual(values = c("Transect" = "green", "ROV" = "#341C1C"))
+
+# rov on one axis and transect on other???
+df_long <- df_full %>%
+  pivot_longer(
+    cols = c(transect_raw_num, number),
+    names_to = "Method",
+    values_to = "Value"
+  )
+
+ggplot(df_full, aes(x = number, y = transect_raw_num, color = method.x )) +
+  geom_point(size = 2) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "red") +
+  labs(title = "Transect vs. ROV Survey",
+       x = "ROV Survey",
+       y = "Transect Survey") +
+  theme_classic() +
+  scale_colour_manual(values = c("transect_raw_num" = "green", "number" = "#341C1C"))
 
 
-## Plot ?: Ranked differences in abundance b/w methods
 
-
-
-
-
-
-
+##### for raw data plots ####
+### raw data points 
+ ggplot() +
+  labs(x = "Wasting Categories", y = "Number of stars/minute") +
+  theme_classic() +
+  theme(legend.position = "none") +
+  theme(axis.title = element_text(color = "black"),
+        axis.text = element_text(color = "black")) +
+  theme(panel.grid.minor = element_blank())+
+  geom_point(data= combined_diameter_full, 
+             aes(x = wasting, y = diameter, colour = wasting),
+             position=position_jitter(width=0.2), alpha=1) +
+  scale_colour_manual(values = c("#D5A021",
+                                 "#5BA054"))

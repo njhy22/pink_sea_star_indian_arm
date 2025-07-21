@@ -1,109 +1,112 @@
 dive_id,location,species,common_name,number
-BI_J6_T1_B1,Boulder Island,Pisaster brevispinus ,Pink,12
-BI_J6_T1_B1,Boulder Island,Dermasterias imbricata,Leather ,24
-BI_J6_T2_B1,Boulder Island,Pisaster brevispinus ,Pink,12
-BI_J6_T2_B1,Boulder Island,Dermasterias imbricata,Leather ,2
-BI_J6_T2_B1,Boulder Island,,Unknown,2
-BI_J6_T1_B2,Boulder Island,Dermasterias imbricata,Leather,32
-BI_J6_T1_B2,Boulder Island,Pisaster brevispinus ,Pink,17
-BI_J6_T2_B2,Boulder Island,Dermasterias imbricata,Leather,12
-BI_J6_T2_B2,Boulder Island,Pisaster brevispinus ,Pink ,15
+BI_J6_T1_BD,Boulder Island,Pisaster brevispinus,Pink,12
+BI_J6_T1_BD,Boulder Island,Dermasterias imbricata,Leather ,24
+BI_J6_T2_BD,Boulder Island,Pisaster brevispinus,Pink,12
+BI_J6_T2_BD,Boulder Island,Dermasterias imbricata,Leather ,2
+BI_J6_T2_BD,Boulder Island,,Unknown,2
+BI_J6_T1_BU,Boulder Island,Dermasterias imbricata,Leather,32
+BI_J6_T1_BU,Boulder Island,Pisaster brevispinus,Pink,17
+BI_J6_T2_BU,Boulder Island,Dermasterias imbricata,Leather,12
+BI_J6_T2_BU,Boulder Island,Pisaster brevispinus,Pink ,15
 TI_J20_T1_BD,Twin Island,Dermasterias imbricata,Leather,9
-TI_J20_T1_BD,Twin Island,Pisaster brevispinus ,Pink,26
+TI_J20_T1_BD,Twin Island,Pisaster brevispinus,Pink,26
 TI_J20_T2_BD,Twin Island,Dermasterias imbricata,Leather,24
-TI_J20_T2_BD,Twin Island,Pisaster brevispinus ,Pink,18
+TI_J20_T2_BD,Twin Island,Pisaster brevispinus,Pink,18
 TI_J20_T1_BU,Twin Island,Dermasterias imbricata,Leather,16
 TI_J20_T1_BU,Twin Island,Pycnopodia helianthoides,Sunflower,1
-TI_J20_T1_BU,Twin Island,Pisaster brevispinus ,Pink,24
+TI_J20_T1_BU,Twin Island,Pisaster brevispinus,Pink,24
 TI_J20_T2_BU,Twin Island,Dermasterias imbricata,Leather,6
-TI_J20_T2_BU,Twin Island,Pisaster brevispinus ,Pink,13
+TI_J20_T2_BU,Twin Island,Pisaster brevispinus,Pink,13
 BB_J27_T1_BU,Bedwell Bay,Pisaster ochraceus,Ochre,9
-BB_J27_T1_BU,Bedwell Bay,Pisaster brevispinus ,Pink,2
+BB_J27_T1_BU,Bedwell Bay,Pisaster brevispinus,Pink,2
 BB_J27_T1_BU,Bedwell Bay,Dermasterias imbricata,Leather,40
 BB_J27_T1_BU,Bedwell Bay,Evasterias troschelii,Mottled,4
-BB_J27_T2_BU,Bedwell Bay,Pisaster brevispinus ,Pink,4
+BB_J27_T2_BU,Bedwell Bay,Pisaster brevispinus,Pink,4
 BB_J27_T2_BU,Bedwell Bay,Dermasterias imbricata,Leather,19
 BB_J27_T2_BU,Bedwell Bay,Evasterias troschelii,Mottled,9
 BB_J27_T2_BU,Bedwell Bay,Pisaster ochraceus,Ochre,4
 BB_J27_T1_BD,Bedwell Bay,Dermasterias imbricata,Leather,25
-BB_J27_T1_BD,Bedwell Bay,Pisaster brevispinus ,Pink,2
+BB_J27_T1_BD,Bedwell Bay,Pisaster brevispinus,Pink,2
 BB_J27_T1_BD,Bedwell Bay,Pisaster ochraceus,Ochre,2
 BB_J27_T1_BD,Bedwell Bay,Evasterias troschelii,Mottled,1
 BB_J27_T2_BD,Bedwell Bay,Dermasterias imbricata,Leather,22
-BB_J27_T2_BD,Bedwell Bay,Pisaster brevispinus ,Pink,1
+BB_J27_T2_BD,Bedwell Bay,Pisaster brevispinus,Pink,1
 BB_J27_T2_BD,Bedwell Bay,Evasterias troschelii,Mottled,4
 JI_F5_T1_BU,Jug Island,Dermasterias imbricata,Leather,32
-JI_F5_T1_BU,Jug Island,Pisaster brevispinus ,Pink,5
+JI_F5_T1_BU,Jug Island,Pisaster brevispinus,Pink,5
 JI_F5_T2_BU,Jug Island,Dermasterias imbricata,Leather,2
-JI_F5_T2_BU,Jug Island,Pisaster brevispinus ,Pink,2
+JI_F5_T2_BU,Jug Island,Pisaster brevispinus,Pink,2
 JI_F5_T1_BD,Jug Island,Pisaster ochraceus,Ochre,2
 JI_F5_T1_BD,Jug Island,Dermasterias imbricata,Leather,24
-JI_F5_T1_BD,Jug Island,Pisaster brevispinus ,Pink,6
+JI_F5_T1_BD,Jug Island,Pisaster brevispinus,Pink,6
 JI_F5_T2_BD,Jug Island,Dermasterias imbricata,Leather,1
-JI_F5_T2_BD,Jug Island,Pisaster brevispinus ,Pink,4
-BP_M17_T1_BU,Best Point,Pisaster brevispinus ,Pink,11
+JI_F5_T2_BD,Jug Island,Pisaster brevispinus,Pink,4
+BP_M17_T1_BU,Best Point,Pisaster brevispinus,Pink,11
 BP_M17_T1_BU,Best Point,Dermasterias imbricata,Leather,31
 BP_M17_T1_BU,Best Point,Pisaster ochraceus,Ochre,19
 BP_M17_T2_BU,Best Point,Dermasterias imbricata,Leather,20
-BP_M17_T2_BU,Best Point,Pisaster brevispinus ,Pink,10
+BP_M17_T2_BU,Best Point,Pisaster brevispinus,Pink,10
 BP_M17_T2_BU,Best Point,Pisaster ochraceus,Ochre,2
 BP_M17_T1_BD,Best Point,Dermasterias imbricata,Leather,30
-BP_M17_T1_BD,Best Point,Pisaster brevispinus ,Pink,13
+BP_M17_T1_BD,Best Point,Pisaster brevispinus,Pink,13
 BP_M17_T2_BD,Best Point,Dermasterias imbricata,Leather,30
-BP_M17_T2_BD,Best Point,Pisaster brevispinus ,Pink,8
+BP_M17_T2_BD,Best Point,Pisaster brevispinus,Pink,8
 BP_M17_T2_BD,Best Point,Evasterias troschelii,Mottled,1
 CP_M19_T1_BD,Cate's Park,Dermasterias imbricata,Leather,10
-CP_M19_T1_BD,Cate's Park,Pisaster brevispinus ,Pink,23
+CP_M19_T1_BD,Cate's Park,Pisaster brevispinus,Pink,23
 CP_M19_T1_BD,Cate's Park,Evasterias troschelii,Mottled,4
 CP_M19_T1_BD,Cate's Park,Pisaster ochraceus,Ochre,8
 CP_M19_T2_BD,Cate's Park,Pisaster ochraceus,Ochre,25
 CP_M19_T2_BD,Cate's Park,Evasterias troschelii,Mottled,2
 CP_M19_T2_BD,Cate's Park,Dermasterias imbricata,Leather,18
-CP_M19_T2_BD,Cate's Park,Pisaster brevispinus ,Pink,3
+CP_M19_T2_BD,Cate's Park,Pisaster brevispinus,Pink,3
 CP_M19_T1_BU,Cate's Park,Pisaster ochraceus,Ochre,15
 CP_M19_T1_BU,Cate's Park,Evasterias troschelii,Mottled,2
 CP_M19_T1_BU,Cate's Park,Dermasterias imbricata,Leather,15
-CP_M19_T1_BU,Cate's Park,Pisaster brevispinus ,Pink,12
-CP_M19_T2_BU,Cate's Park,Pisaster brevispinus ,Pink,3
+CP_M19_T1_BU,Cate's Park,Pisaster brevispinus,Pink,12
+CP_M19_T2_BU,Cate's Park,Pisaster brevispinus,Pink,3
 CP_M19_T2_BU,Cate's Park,Pisaster ochraceus,Ochre,12
 CP_M19_T2_BU,Cate's Park,Dermasterias imbricata,Leather,18
-LR_M26_T1_BU,Lone Rock,Dermasterias imbricata,Leather,39
-LR_M26_T1_BU,Lone Rock,Pisaster brevispinus ,Pink,38
-LR_M26_T1_BU,Lone Rock,Pisaster ochraceus,Ochre,23
-LR_M26_T2_BU,Lone Rock,Pisaster brevispinus ,Pink,60
-LR_M26_T2_BU,Lone Rock,Dermasterias imbricata,Leather,59
-LR_M26_T2_BU,Lone Rock,Evasterias troschelii,Mottled,1
-LR_M26_T1_BD,Lone Rock,Dermasterias imbricata,Leather,29
-LR_M26_T1_BD,Lone Rock,Pisaster brevispinus ,Pink,14
-LR_M26_T1_BD,Lone Rock,Pisaster ochraceus,Ochre,1
-LR_M26_T2_BD,Lone Rock,Dermasterias imbricata,Leather,28
-LR_M26_T2_BD,Lone Rock,Pisaster brevispinus ,Pink,28
-LR_M26_T2_BD,Lone Rock,Pisaster ochraceus,Ochre,1
-MI_M31_T1_BU,Moody Inlet,N/A,N/A,0
+LR_M26_T1_BU,Lone Rock Point,Dermasterias imbricata,Leather,39
+LR_M26_T1_BU,Lone Rock Point,Pisaster brevispinus,Pink,38
+LR_M26_T1_BU,Lone Rock Point,Pisaster ochraceus,Ochre,23
+LR_M26_T2_BU,Lone Rock Point,Pisaster brevispinus,Pink,60
+LR_M26_T2_BU,Lone Rock Point,Dermasterias imbricata,Leather,59
+LR_M26_T2_BU,Lone Rock Point,Evasterias troschelii,Mottled,1
+LR_M26_T1_BD,Lone Rock Point,Dermasterias imbricata,Leather,29
+LR_M26_T1_BD,Lone Rock Point,Pisaster brevispinus,Pink,14
+LR_M26_T1_BD,Lone Rock Point,Pisaster ochraceus,Ochre,1
+LR_M26_T2_BD,Lone Rock Point,Dermasterias imbricata,Leather,28
+LR_M26_T2_BD,Lone Rock Point,Pisaster brevispinus,Pink,28
+LR_M26_T2_BD,Lone Rock Point,Pisaster ochraceus,Ochre,1
+MI_M31_T1_BU,Moody Inlet,Pisaster brevispinus,Pink,0
 MI_M31_T2_BU,Moody Inlet,Evasterias troschelii,Mottled,1
+MI_M31_T2_BU,Moody Inlet,Pisaster brevispinus,Pink,0
 MI_M31_T1_BD,Moody Inlet,Evasterias troschelii,Mottled,2
+MI_M31_T1_BD,Moody Inlet,Pisaster brevispinus,Pink,0
 MI_M31_T2_BD,Moody Inlet,Dermasterias imbricata,Leather,1
-GR_A5_T1_BU,Grey Rock Island,Pisaster ochraceus,Ochre,71
-GR_A5_T1_BU,Grey Rock Island,Pisaster brevispinus ,Pink,32
-GR_A5_T1_BU,Grey Rock Island,Dermasterias imbricata,Leather,72
-GR_A5_T1_BU,Grey Rock Island,Evasterias troschelii,Mottled,2
-GR_A5_T2_BU,Grey Rock Island,Dermasterias imbricata,Leather,226
-GR_A5_T2_BU,Grey Rock Island,Pisaster ochraceus,Ochre,421
-GR_A5_T2_BU,Grey Rock Island,Pisaster brevispinus ,Pink,94
-GR_A5_T1_BD,Grey Rock Island,Pisaster brevispinus ,Pink,26
-GR_A5_T1_BD,Grey Rock Island,Dermasterias imbricata,Leather,34
-GR_A5_T1_BD,Grey Rock Island,Pisaster ochraceus,Ochre,142
-GR_A5_T2_BD,Grey Rock Island,Pisaster brevispinus ,Pink,68
-GR_A5_T2_BD,Grey Rock Island,Dermasterias imbricata,Leather,215
-GR_A5_T2_BD,Grey Rock Island,Pisaster ochraceus,Ochre,64
+MI_M31_T2_BD,Moody Inlet,Pisaster brevispinus,Pink,0
+GR_A5_T1_BU,Grey Rocks Island,Pisaster ochraceus,Ochre,71
+GR_A5_T1_BU,Grey Rocks Island,Pisaster brevispinus,Pink,32
+GR_A5_T1_BU,Grey Rocks Island,Dermasterias imbricata,Leather,72
+GR_A5_T1_BU,Grey Rocks Island,Evasterias troschelii,Mottled,2
+GR_A5_T2_BU,Grey Rocks Island,Dermasterias imbricata,Leather,226
+GR_A5_T2_BU,Grey Rocks Island,Pisaster ochraceus,Ochre,421
+GR_A5_T2_BU,Grey Rocks Island,Pisaster brevispinus,Pink,94
+GR_A5_T1_BD,Grey Rocks Island,Pisaster brevispinus,Pink,26
+GR_A5_T1_BD,Grey Rocks Island,Dermasterias imbricata,Leather,34
+GR_A5_T1_BD,Grey Rocks Island,Pisaster ochraceus,Ochre,142
+GR_A5_T2_BD,Grey Rocks Island,Pisaster brevispinus,Pink,68
+GR_A5_T2_BD,Grey Rocks Island,Dermasterias imbricata,Leather,215
+GR_A5_T2_BD,Grey Rocks Island,Pisaster ochraceus,Ochre,64
 BC_A9_T1_BD,Belcarra Bay,Dermasterias imbricata,Leather,4
-BC_A9_T1_BD,Belcarra Bay,Pisaster brevispinus ,Pink,12
+BC_A9_T1_BD,Belcarra Bay,Pisaster brevispinus,Pink,12
 BC_A9_T2_BD,Belcarra Bay,Evasterias troschelii,Mottled,4
 BC_A9_T2_BD,Belcarra Bay,Dermasterias imbricata,Leather,5
-BC_A9_T2_BD,Belcarra Bay,Pisaster brevispinus ,Pink,12
+BC_A9_T2_BD,Belcarra Bay,Pisaster brevispinus,Pink,12
 BC_A9_T1_BU,Belcarra Bay,Pisaster ochraceus,Ochre,1
 BC_A9_T1_BU,Belcarra Bay,Dermasterias imbricata,Leather,7
-BC_A9_T1_BU,Belcarra Bay,Pisaster brevispinus ,Pink,18
+BC_A9_T1_BU,Belcarra Bay,Pisaster brevispinus,Pink,18
 BC_A9_T1_BU,Belcarra Bay,Evasterias troschelii,Mottled,3
 BC_A9_T2_BU,Belcarra Bay,Dermasterias imbricata,Leather,7
-BC_A9_T2_BU,Belcarra Bay,Pisaster brevispinus ,Pink,14
+BC_A9_T2_BU,Belcarra Bay,Pisaster brevispinus,Pink,14

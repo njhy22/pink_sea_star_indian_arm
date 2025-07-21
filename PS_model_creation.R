@@ -64,7 +64,10 @@ predict_mod1A_data <- ggpredict(mod1A, terms = "time_period") %>%
 #to PLOT raw data and predicted values at same time 
 graph1A <- ggplot() +
   labs(x = "Time Period", y = "Number of stars/minute") +
-  theme_bw() +
+  theme_classic() +
+  theme(legend.position = "none") +
+  theme(axis.title = element_text(color = "black"),
+        axis.text = element_text(color = "black")) +
   theme(panel.grid.minor = element_blank()) +
   geom_point(data= mod1A_data_clean, 
              aes(x = time_period, y = number_min, colour = time_period),
@@ -76,6 +79,7 @@ graph1A <- ggplot() +
    geom_jitter(width = 0.4, alpha = 0.5) +
   scale_colour_manual(values = c("#C82D47",
                                  "#5BA054"))
+graph1A
 
 # lighter point- alpha values
 # clearer points- jitter them
@@ -131,7 +135,10 @@ predict_mod1B_data <- ggpredict(mod1B, terms = "wasting") %>% #if many predictor
 #to PLOT raw data and predicted values at same time  **FIX ORDER of categories (should be pre post present)
 graph1B <- ggplot() +
   labs(x = "Wasting Categories", y = "Number of stars/minute") +
-  theme_bw() +
+  theme_classic() +
+  theme(legend.position = "none") +
+  theme(axis.title = element_text(color = "black"),
+axis.text = element_text(color = "black")) +
   theme(panel.grid.minor = element_blank()) +
   geom_point(data= mod1B_filter_wasting, 
              aes(x = wasting, y = number_min, colour = wasting),
@@ -142,6 +149,8 @@ graph1B <- ggplot() +
                   shape=16, size=0.7) +
   scale_colour_manual(values = c("#3F88C5",
                                  "#5BA054"))
+
+graph1B
 
 ##### ABUND_MOD1C:  WITH WASTING(POST AND PRESENT) WHACK #####
 ##load .csv
@@ -171,7 +180,7 @@ ggplot(mod1C_filter_wasting, aes(x = number_min)) +
 
 ##DISTRIBUTION CHOSEN: tweedie had error, gamma kinda works:?? 
 
-##create model 1B
+##create model 1C
 mod1C <- glmmTMB(number_min ~ wasting + (1|location), 
                  offset = log(),
                  family = poisson, #distribution of the data
@@ -199,8 +208,11 @@ predict_mod1C_data <- ggpredict(mod1C, terms = "wasting") %>% #if many predictor
 #to PLOT raw data and predicted values at same time  **FIX ORDER of categories (should be pre post present)
 graph1C <- ggplot() +
   labs(x = "Wasting Categories", y = "Number of stars/minute") +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank()) +
+  theme_classic() +
+  theme(legend.position = "none") +
+  theme(axis.title = element_text(color = "black"),
+        axis.text = element_text(color = "black")) +
+  theme(panel.grid.minor = element_blank())+
   geom_point(data= mod1C_filter_wasting, 
              aes(x = wasting, y = number_min, colour = wasting),
              position=position_jitter(width=0.2), alpha=0.4) +
@@ -319,16 +331,21 @@ predict_modD1A_data <- ggpredict(modD1A, terms = "time_period") %>% #if many pre
 graphD1A <- ggplot() +
   labs(x = "Time Period", y = "Diameter (cm)") +
   theme_classic() +
+  theme(legend.position = "none") +
+  theme(axis.title = element_text(color = "black"),
+        axis.text = element_text(color = "black")) +
    theme(panel.grid.minor = element_blank()) +
-  geom_point(data= model_D1A_data_clean, 
+  geom_point(data = model_D1A_data_clean, 
              aes(x = time_period, y = diameter, colour = time_period),
-             position=position_jitter(width=0.2), alpha=0.2) +
+             position=position_jitter(width=0.2), alpha=0.15) +
   geom_pointrange(data = predict_modD1A_data, #adding predictors to graph with std
                   aes(x = time_period, y = predicted, ymin = conf.low, ymax = conf.high,
                       color=time_period), 
                   shape=16, size=0.7) +
   scale_colour_manual(values = c("#C82D47",
                                  "#5BA054"))
+
+graphD1A
 
 
 ###### DIAM_MOD1B: WASITN PRE AND PRESENT ######## 
@@ -380,17 +397,22 @@ predict_modD1B_data <- ggpredict(modD1B, terms = "wasting") %>% #if many predict
 graphD1B <- ggplot() +
   labs( x = "Wasting Categories", y = "Diameter (cm)") +
   theme_classic() +
+  theme(legend.position = "none") +
+  theme(axis.title = element_text(color = "black"),
+        axis.text = element_text(color = "black")) +
   theme(panel.grid.minor = element_blank()) +
   geom_point(data= model_D1B_filter_wasting, 
              aes(x = wasting, y = diameter, colour = wasting),
-             position=position_jitter(width=0.2), alpha=0.2) +
+             position=position_jitter(width=0.2), alpha=0.15) +
   geom_pointrange(data = predict_modD1B_data, #adding predictors to graph with std
                   aes(x = wasting, y = predicted, ymin = conf.low, ymax = conf.high,
                       color=wasting), 
                   shape=16, size=0.7) +
   scale_colour_manual(values = c("#3F88C5",
                                  "#5BA054"))
-###### DIAM_MOD1C:WASTING POST AND PRESENT########
+graphD1B
+
+###### DIAM_MOD1C:WASTING POST AND PRESENT (take out for now in analysis)########
 model_D1C_data <- read.csv("./manipulated_data/past_present_indiv_diameter.csv")
 
 model_D1C_data_clean <- na.omit(model_D1C_data) %>%
@@ -447,12 +469,16 @@ graphD1C <- ggplot() +
                   shape=16, size=0.7) +
   scale_colour_manual(values = c("#D5A021",
                                  "#5BA054"))
-###### DIAM_MOD1D:DATE #######
+###### DIAM_MOD1D:DATE (NOT DOING FOR NOW) #######
 ##### create multi panel plot  #####
 top_row <- plot_grid(graph1A, graph1B,ncol = 2)
-bot_row <- plot_grid(graphD1A, graphD1B, graphD1C, ncol = 3)
+bot_row <- plot_grid(graphD1A, graphD1B, ncol = 2)
 
-final_plot <- plot_grid(top_row, bot_row, ncol = 1)
+final_plot <- plot_grid(graph1A, graph1B,
+                        graphD1A, graphD1B,
+                        labels = c("A", "B", "C", "D"),
+                        ncol = 2,
+                        label_size = 14)
 print(final_plot)
 
 ##### MODEL 2: ROV VS TRANSECT ##########
