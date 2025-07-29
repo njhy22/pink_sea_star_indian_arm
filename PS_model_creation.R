@@ -15,7 +15,9 @@ library(DHARMa)
 library(glmmTMB)
 library(ggeffects)
 library(cowplot)
-
+library(lme4)
+library(Matrix)
+library(emmeans)
 
 ##### ABUND_MOD1A:  time period (historic and present) *fix graph asthetic ####### 
 ##load .csv
@@ -215,13 +217,10 @@ graph1C <- ggplot() +
   theme(panel.grid.minor = element_blank())+
   geom_point(data= mod1C_filter_wasting, 
              aes(x = wasting, y = number_min, colour = wasting),
-             position=position_jitter(width=0.2), alpha=0.4) +
-  geom_pointrange(data = predict_mod1C_data, #adding predictors to graph with std
-                  aes(x = wasting, y = predicted, ymin = conf.low, ymax = conf.high,
-                      color=wasting),
-                  shape=16, size=0.7) +
+             position=position_jitter(width=0.2), alpha=1) +
   scale_colour_manual(values = c("#D5A021",
                                  "#5BA054"))
+graph1C
 
 ##### ABUND_MOD1D: DATE  ######
 ##load .csv
@@ -482,9 +481,152 @@ final_plot <- plot_grid(graph1A, graph1B,
 print(final_plot)
 
 ##### MODEL 2: ROV VS TRANSECT ##########
-mod2A_data <- read.csv("./manipulated_data/present_methods_compare.csv")
+mod3_data <- read.csv("./manipulated_data/transect_rov_abun.csv")
 
+model_3_data_clean <- na.omit(mod3_data) %>%
+  mutate(location = as.factor(location))
+         
+str(model_3_data_clean)
+
+#checkong histogram for distribution of data
+ggplot(model_3_data, aes(x = transect_average)) +
+  geom_histogram(bins = 10)  
+
+
+## selecting teedie distribution for count base response variable (because of histogram results)
+
+##DISTRIBUTION CHOSEN: tweedie distribution 
+
+##create model D1A
+unique(model_3_data_clean$location)
+
+mod3 <- lm(transect_average ~ rov_average, 
+                  data = model_3_data_clean)
+
+
+mod.emt <- emtrends(mod3, ~1,
+                    var = "rov_average")
+
+mod.emt
+
+test(mod.emt, null=1)
+
+##checking model fit with DHARMA , its fine even with red
+plot(simulateResiduals(mod3))
+
+## this one looks alright, maybe try others 
+
+##assess model output 
+summary(mod3)
+
+##predicting 
+predict_mod3_data <- ggpredict(mod3, terms = "time_period") %>% #if many predictors, more terms 
+  rename(time_period = x)
+
+#to plot raw data and predicted values at same time 
+## plot it and then add error 
+## if the 1:1 liune it to error 
+graphD1A <- ggplot() +
+  labs(x = "Time Period", y = "Diameter (cm)") +
+  theme_classic() +
+  theme(legend.position = "none") +
+  theme(axis.title = element_text(color = "black"),
+        axis.text = element_text(color = "black")) +
+  theme(panel.grid.minor = element_blank()) +
+  geom_point(data = model_3_data_clean, 
+             aes(x = time_period, y = diameter, colour = time_period),
+             position=position_jitter(width=0.2), alpha=0.15) +
+  geom_pointrange(data = predict_mod3_data, #adding predictors to graph with std
+                  aes(x = time_period, y = predicted, ymin = conf.low, ymax = conf.high,
+                      color=time_period), 
+                  shape=16, size=0.7) +
+  scale_colour_manual(values = c("#C82D47",
+                                 "#5BA054"))
 
 ##### MODEL 3: LIFE HISTORY: PRESENT #######
 
+##### for presentation #####
+## plot A
+ggplot() +
+  labs(x = "Time period", y = "Number of stars/minute") +
+  theme_classic(base_size = 20) +
+  theme(legend.position = "none") +
+  theme(axis.title = element_text(color = "black"),
+        axis.text = element_text(color = "black"),
+        axis.text.x = element_text(size = 20),  
+        axis.text.y = element_text(size = 20)) +
+  theme(panel.grid.minor = element_blank()) +
+  geom_point(data= mod1A_data_clean, 
+             aes(x = time_period, y = number_min, colour = time_period),
+             shape=16, size= 5,
+             position=position_jitter(width=0.2), alpha=0.4) +
+  geom_pointrange(data = predict_mod1A_data, #adding predictors to graph with std
+                  aes(x = time_period, y = predicted, ymin = conf.low, ymax = conf.high,
+                      color=time_period),
+                  shape=16, size=1.5) +
+  geom_jitter(width = 0.4, alpha = 0.5) +
+  scale_colour_manual(values = c("#C82D47",
+                                 "#5BA054")) 
 
+## plot C
+ggplot() +
+  labs(x = "Time period", y = "Diameter (cm)") +
+  theme_classic(base_size = 20) +
+  theme(legend.position = "none") +
+  theme(axis.title = element_text(color = "black"),
+        axis.text = element_text(color = "black"),
+        axis.text.x = element_text(size = 20),  
+        axis.text.y = element_text(size = 20)) +
+  theme(panel.grid.minor = element_blank()) +
+  geom_point(data = model_D1A_data_clean, 
+             aes(x = time_period, y = diameter, colour = time_period),
+             shape=16, size= 3,
+             position=position_jitter(width=0.2), alpha=0.22) +
+  geom_pointrange(data = predict_modD1A_data, #adding predictors to graph with std
+                  aes(x = time_period, y = predicted, ymin = conf.low, ymax = conf.high,
+                      color=time_period), 
+                  shape=16, size=1.3) +
+  scale_colour_manual(values = c("#C82D47",
+                                 "#5BA054"))
+
+#graph B
+ ggplot() +
+  labs(x = "Wasting categories", y = "Number of stars/minute") +
+  theme_classic(base_size = 20) +
+  theme(legend.position = "none") +
+  theme(axis.title = element_text(color = "black"),
+        axis.text = element_text(color = "black"),
+        axis.text.x = element_text(size = 20),  
+        axis.text.y = element_text(size = 20)) +
+  theme(panel.grid.minor = element_blank()) +
+  geom_point(data= mod1B_filter_wasting, 
+             aes(x = wasting, y = number_min, colour = wasting),
+             shape=16, size= 4,
+             position=position_jitter(width=0.2), alpha=0.4) +
+  geom_pointrange(data = predict_mod1B_data, #adding predictors to graph with std
+                  aes(x = wasting, y = predicted, ymin = conf.low, ymax = conf.high,
+                      color=wasting),
+                  shape=16, size=1.5) +
+  scale_colour_manual(values = c("#3F88C5",
+                                 "#5BA054"))
+## graph D 
+ ggplot() +
+  labs( x = "Wasting categories", y = "Diameter (cm)") +
+  theme_classic(base_size = 20) +
+  theme(legend.position = "none") +
+  theme(axis.title = element_text(color = "black"),
+        axis.text = element_text(color = "black"),
+        axis.text.x = element_text(size = 20),  
+        axis.text.y = element_text(size = 20)) +
+  theme(panel.grid.minor = element_blank()) +
+  geom_point(data= model_D1B_filter_wasting, 
+             aes(x = wasting, y = diameter, colour = wasting),
+             shape=16, size= 3,
+             position=position_jitter(width=0.2), alpha=0.25) +
+  geom_pointrange(data = predict_modD1B_data, #adding predictors to graph with std
+                  aes(x = wasting, y = predicted, ymin = conf.low, ymax = conf.high,
+                      color=wasting), 
+                  shape=16, size=1.3) +
+  scale_colour_manual(values = c("#3F88C5",
+                                 "#5BA054"))
+graphD1B
